@@ -1,0 +1,156 @@
+* {
+/*position: relative;*/
+}
+
+/* dark purple: #BB53E8
+light purple: #F3E4FA
+*/
+/* remove annoying outline on buttons and inputs*/
+button, input:focus{
+outline:0;
+}
+
+/* Primary container objects */
+#container{
+width: 1000px;
+margin-right: auto;
+margin-left: auto;
+border: 1px solid black;
+box-shadow: 5px 5px 5px black;
+}
+
+header {
+display: inline-block;
+width: 100%;
+background-color: #BB53E8;
+border-bottom: 1px solid black;
+box-shadow: inset -2px -2px 2px black;
+/*margin-top: -32px; /* because header not fiting into container! */
+}
+
+#sub-head{
+width: 100%;
+background-color: #F3E4FA;
+box-shadow: inset -2px -2px 2px black;
+}
+
+nav{
+display: flex;
+width: 400px;
+margin-right: auto;
+margin-left: auto;
+background-color: gray;
+}
+
+#display-active, #display-inactive{
+width: 100%;
+border-top: 1px solid white;
+box-shadow: 2px 2px 2px black;
+}
+
+/* Header Sub-components */
+
+#title{
+margin-left: 100px;
+margin-top: auto;
+margin-bottom: auto;
+}
+
+h1{
+font-family: sans-serif;
+color: white;
+font-size: 3em;
+
+}
+
+/* Nav Bar sub-components */
+
+.nav-btn{
+display: block;
+overflow: hidden;
+width: 133px;
+height: 40px;
+background-color: #290537;
+color: white;
+}
+
+.nav-btn:hover{
+opacity: 0.6;
+}
+
+.btn-active{
+background-color: white;
+color: #290537;
+}
+
+
+/* Stream display stuff */
+
+.stream{
+display: flex;
+width: 100%;
+border: 1px solid white;
+color: #290537;
+font-size: 1em;
+align-items: center;
+}
+
+.active{
+background-color: #E5AE23;
+/*background-color: #E4BD25; */
+}
+
+.inactive{
+background-color: #C2AFC9;
+}
+
+.stream-pic
+{
+height: 50px;
+width: 50px;
+border-radius: 50px;
+border: 2px solid white;
+margin-left: 5px;
+margin-right: 5px;
+}
+
+.stream-name{
+width: 20%;
+font-size: 1.2em;
+text-align: left;
+margin-left: 5%;
+}
+
+.stream-status{
+font-size: 1.2em;
+width: 50%;
+text-align: left;
+margin-left: 15%;
+}
+
+.hidden{
+display: none;
+}
+
+a{
+text-decoration: none;
+color: purple;
+}
+
+/* media queries for responsive design! */
+/*Queries for different screen widths on desktop*/
+@media screen and (max-width: 1000px){
+h1{
+font-size: 2.5em;
+}
+#container{
+width: 100%;
+}
+}
+
+@media screen and (max-width: 600px){
+#title{
+margin-left: 5px;
+}
+}
+/*Mobile Phone Media queries*/
