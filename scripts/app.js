@@ -47,92 +47,61 @@ $("document").ready(function(){
    }
    else{ console.log("ERROR: what did you click?"); }
  });
- // Function to show stream data on the screen
- function showStream (stream, status){
-   var streamImgURL = 'http://s.jtvnw.net/jtv_user_pictures/hosted_images/TwitchGlitchIcon_WhiteonPurple.png';
-   switch(status){
-     case 'active':
-       streamHTML = "<div class='stream active'>";
-       streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ stream.channel.logo + "' alt='pic'></span>";
-       streamHTML += "<span class='stream-name'><a href='" +  stream.channel.url  +"' target='_blank'>" + stream.channel.display_name + "</a></span>";
-       streamHTML += "<span class='stream-status'>" + stream.channel.game + ": " + stream.channel.status + "</span></div>";
-       active.append(streamHTML);
-       break;
-     case 'closed':
-       streamHTML = "<div class='stream inactive'>";
-       streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ streamImgURL + "' alt='pic'></span>";
-       streamHTML += "<span class='stream-name'>" + stream.display_name + "</span>";
-       streamHTML += "<span class='stream-status'>" + status + "</span></div>";
-       inactive.append(streamHTML);
-       break;
-     case 'inactive':
-       streamHTML = "<div class='stream inactive'>";
-       streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ stream.logo + "' alt='pic'></span>";
-       streamHTML += "<span class='stream-name'><a href='" +  stream.url  +"' target='_blank'>" + stream.display_name + "</a></span>";
-       streamHTML += "<span class='stream-status'>" + status + "</span></div>";
-       inactive.append(streamHTML);
-       break;
-     default:
-       console.log("ERROR: invalid status passed to showStream");
-   } //end of switch
-
- } //end showStreams
- function getChannelData(inactiveStreams){
-   var stream;
-   var apiURL = apiBaseURL + 'channels/';
-    //loop through list of inactive streams and get channel data for each
-    for(i = 0; i < inactiveStreams.length; i++){
-       stream = inactiveStreams[i];
-       $.getJSON(apiURL + stream + '?callback=?').success(function(data){
-         console.log("streams channel object for: " + stream);
-         console.log(data);
-         showStream(data, 'inactive');
-       }).fail(function(error){
-         console.log("failed to get: " + stream);
-         console.log(error);
-         showStream({display_name: stream}, 'closed'); //##### This may not have stream name in it!
-       });
-     } //end of for loop
- } //end of getChnlStatus
  function getStreamData(streams){
-   var apiURL = apiBaseURL + 'streams?channel=' + streams.join(',') + '?callback=?';
-   var stream;
-   //clear active and inactive displays before populating new data
-   active.html = "";
-   inactive.html = "";
-   //get data
-   $.getJSON(apiURL, function(data){
-     //populate active stream data
-     for(var i = 0; i < data.streams.length; i++){
-       stream = data.streams[i].channel.display_name;
-       //update inactive list
-       inactiveStreams = inactiveStreams.filter(function(element, index, array){
-         return stream != element;
-       });
-       showStream(data.streams[i], 'active');
-     } //end for loop
-     //populate inactive and closed stream data
-     getChannelData(inactiveStreams);
-   });
- }  // end of getStreamData
- //getStreamData(streams); //start the ball rolling
-
-
- /*The folowing works -
-  I can use a for loop to go through the entire list and then call a render function
-  for each returned object based on if it was succesful or not
-   renderActiveStream(stream);
-   renderInactiveStream(stream);
- */
- function test(streams){
    for(var i = 0; i < streams.length; i++){
-     $.getJSON(apiBaseURL + '/channels/' + streams[i], function(data){
-       console.log(data);
-     });
-   }
+     (function(){
+       var channelName = streams[i];
+       var channelData;
+       $.getJSON(apiBaseURL + '/streams/' + streams[i], function(streamData){
+         console.log(streamData);
+         //test to see if stream is active
+         if(streamData.stream){
+           console.log('stream is active');
+           renderActiveStream(streamData.stream);
+         }
+         //stream not active, so need to get channel data and check to see if channel still active
+         else{
+           $.getJSON(apiBaseURL + '/channels/' + channelName, function(channelData){
+             console.log(channelData);
+             if(channelData.error){
+               console.log('channel does not exist');
+               renderClosedStream(channelData, channelName);
+             }
+             //channel streams are just inactive
+             else{
+                renderInactiveStream(channelData);
+                console.log('channel stream is inactive');
+             }
+           });
+         }
+       });//end of .getJSON
+     })();  //end of wrapper function
+   } //end of for loop
  }
-
- test(streams);
+ function renderActiveStream(stream){
+   var streamHTML = "<div class='stream active'>";
+   streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ stream.channel.logo + "' alt='pic'></span>";
+   streamHTML += "<span class='stream-name'><a href='" +  stream.channel.url  +"' target='_blank'>" + stream.channel.display_name + "</a></span>";
+   streamHTML += "<span class='stream-status'>" + stream.channel.game + ": " + stream.channel.status + "</span></div>";
+   active.append(streamHTML);
+ }
+ function renderInactiveStream(stream){
+   var streamHTML = "<div class='stream inactive'>";
+   streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ stream.logo + "' alt='pic'></span>";
+   streamHTML += "<span class='stream-name'><a href='" +  stream.url  +"' target='_blank'>" + stream.display_name + "</a></span>";
+   streamHTML += "<span class='stream-status'>" + stream.status + "</span></div>";
+   inactive.append(streamHTML);
+ }
+ function renderClosedStream(stream, name){
+   var streamImgURL = 'http://s.jtvnw.net/jtv_user_pictures/hosted_images/TwitchGlitchIcon_WhiteonPurple.png';
+   var streamHTML = "<div class='stream inactive'>";
+   streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ streamImgURL + "' alt='pic'></span>";
+   streamHTML += "<span class='stream-name'>" + name + "</span>";
+   streamHTML += "<span class='stream-status'>CLOSED</span></div>";
+   inactive.append(streamHTML);
+ }
+//start the whole thing rolling
+getStreamData(streams);
 
 }); //end document.ready
      //# sourceURL=pen.js
