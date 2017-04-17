@@ -20,6 +20,7 @@ $("document").ready(function(){
  var inactiveStreams = streams;
  var inactive = $("#display-inactive");
  var active = $("#display-active");
+ var DEFAULT_LOGO = 'http://s.jtvnw.net/jtv_user_pictures/hosted_images/TwitchGlitchIcon_WhiteonPurple.png';
   // Utility function to set active buttons appearence and deactive previously
  // active button
   function activateBtn(button){
@@ -52,7 +53,7 @@ $("document").ready(function(){
      (function(){
        var channelName = streams[i];
        var channelData;
-       $.getJSON(apiBaseURL + '/streams/' + streams[i], function(streamData){
+       $.getJSON(apiBaseURL + '/streams/' + streams[i] + '?callback=?', function(streamData){
          console.log(streamData);
          //test to see if stream is active
          if(streamData.stream){
@@ -61,7 +62,7 @@ $("document").ready(function(){
          }
          //stream not active, so need to get channel data and check to see if channel still active
          else{
-           $.getJSON(apiBaseURL + '/channels/' + channelName, function(channelData){
+           $.getJSON(apiBaseURL + '/channels/' + channelName + '?callback=?', function(channelData){
              console.log(channelData);
              if(channelData.error){
                console.log('channel does not exist');
@@ -80,6 +81,8 @@ $("document").ready(function(){
  }
  function renderActiveStream(stream){
    var streamHTML = "<div class='stream active'>";
+   if(!stream.channel.logo){ stream.channel.logo = DEFAULT_LOGO;  }
+   if(!stream.channel.status) { stream.channel.status = "None Available"; }
    streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ stream.channel.logo + "' alt='pic'></span>";
    streamHTML += "<span class='stream-name'><a href='" +  stream.channel.url  +"' target='_blank'>" + stream.channel.display_name + "</a></span>";
    streamHTML += "<span class='stream-status'>" + stream.channel.game + ": " + stream.channel.status + "</span></div>";
@@ -87,19 +90,22 @@ $("document").ready(function(){
  }
  function renderInactiveStream(stream){
    var streamHTML = "<div class='stream inactive'>";
+   if(!stream.logo){ stream.logo = DEFAULT_LOGO;  }
+   if(!stream.status) { stream.status = "None Available"; }
    streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ stream.logo + "' alt='pic'></span>";
    streamHTML += "<span class='stream-name'><a href='" +  stream.url  +"' target='_blank'>" + stream.display_name + "</a></span>";
    streamHTML += "<span class='stream-status'>" + stream.status + "</span></div>";
    inactive.append(streamHTML);
  }
  function renderClosedStream(stream, name){
-   var streamImgURL = 'http://s.jtvnw.net/jtv_user_pictures/hosted_images/TwitchGlitchIcon_WhiteonPurple.png';
+   var streamImgURL = DEFAULT_LOGO;
    var streamHTML = "<div class='stream inactive'>";
    streamHTML += "<span class='stream-pic-container'><img class='stream-pic' src='"+ streamImgURL + "' alt='pic'></span>";
    streamHTML += "<span class='stream-name'>" + name + "</span>";
    streamHTML += "<span class='stream-status'>CLOSED</span></div>";
    inactive.append(streamHTML);
  }
+ 
 //start the whole thing rolling
 getStreamData(streams);
 
