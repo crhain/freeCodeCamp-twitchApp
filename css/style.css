@@ -24,14 +24,14 @@ display: inline-block;
 width: 100%;
 background-color: #BB53E8;
 border-bottom: 1px solid black;
-box-shadow: inset -2px -2px 2px black;
+/*box-shadow: inset -2px -2px 2px black;*/
 /*margin-top: -32px; /* because header not fiting into container! */
 }
 
 #sub-head{
 width: 100%;
 background-color: #F3E4FA;
-box-shadow: inset -2px -2px 2px black;
+/*box-shadow: inset -2px -2px 2px black;*/
 }
 
 nav{
@@ -45,7 +45,7 @@ background-color: gray;
 #display-active, #display-inactive{
 width: 100%;
 border-top: 1px solid white;
-box-shadow: 2px 2px 2px black;
+/*box-shadow: 2px 2px 2px black;*/
 }
 
 /* Header Sub-components */
